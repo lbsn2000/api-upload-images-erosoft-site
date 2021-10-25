@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors")
 const uploadImage = require('./middlewares/upload-image');
+const ModeloFuncionalidade = require('./model/ModeloFuncionalidade');
 
 app.use((req,res,next) => {
       res.header("Access-Control-Allow-Origin", "*");
@@ -13,23 +14,46 @@ app.use((req,res,next) => {
 
 app.post("/upload-image", uploadImage.single('image'), async (req, res) => {
 
-      console.log(req.body.title)
-      console.log(req.body.modulo)
+      const funcionalidade = new ModeloFuncionalidade({
+            titulo: req.body.title,
+            modulo: req.body.modulo,
+            imagem: req.file.filename
+      });
 
-      if(req.file){
+      await funcionalidade
 
-            return res.status(200).json({
-                  erro: false,
-                  mensagem: "Upload realizado com sucesso!"
-            })
-      }
-      
-      return res.status(400).json({
-            erro: true,
-            mensagem: "ERRO: Upload não realizado com sucesso! Verifique a extensão da imagem e tente novamente! Formatos Aceitos = png, jpg, jpeg, gif"
-      })
+            .save()
 
+            .then(response =>{
+                  return res.status(200).json(response);
+              })
+
+              .catch(error =>{
+                  return res.status(500).json(error);
+            });
 })
+
+
+app.get("/all/:modulo", async (req, res) => {
+    
+      await ModeloFuncionalidade.find({'modulo': {'$in': req.params.modulo}})
+                        
+                        .then(response => {
+
+                              return res.status(200).json(response);
+                        })
+                        .catch(error => {
+
+                              return res.status(500).json(error);
+                        });
+      } 
+)
+
+app.get("/teste", async (req, res) => {
+      
+})
+
+
 
 app.listen(8080, () =>{
       console.log("==> servidor iniciado na porta 8080 <==")

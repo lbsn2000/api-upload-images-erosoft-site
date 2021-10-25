@@ -2,7 +2,6 @@ const { format } = require('date-fns');
 const multer = require('multer');
 
 
-
 module.exports = (multer({
       storage:multer.diskStorage({
             destination: (req, file, callbak) =>{
