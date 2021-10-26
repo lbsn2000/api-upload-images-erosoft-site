@@ -5,10 +5,10 @@ const multer = require('multer');
 module.exports = (multer({
       storage:multer.diskStorage({
             destination: (req, file, callbak) =>{
-                  callbak(null,'./public/upload' )
+                  callbak(null,'./public/uploads' )
             },
             filename: (req,file,callbak) => {
-                  callbak(null, format(Date.now(), "dd_MM_yyyy") + "-" + file.originalname)
+                  callbak(null, format(Date.now(), "dd-MM-yyyy_HHmmss") + "_" + file.originalname)
             }
       }),
 

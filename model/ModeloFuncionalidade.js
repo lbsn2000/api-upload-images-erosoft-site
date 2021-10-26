@@ -9,7 +9,7 @@ const ModeloFuncionalidade = new Schema({
    determinar se elas são requiridas ou não */
    titulo:  {type: String},
    modulo:  {type: String},
-   imagem:  {type: Object} 
+   URLimagem:  {type: Object} 
 
 });
 
