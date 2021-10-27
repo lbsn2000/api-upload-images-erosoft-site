@@ -7,60 +7,63 @@ const ModeloFuncionalidade = require('./model/ModeloFuncionalidade');
 
 app.use(express.static(__dirname + '/public'));
 
-app.use((req,res,next) => {
-      res.header("Access-Control-Allow-Origin", "*");
-      res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
-      res.header("Access-Control-Allow-Headers", "X-PINGOTHER, Content-Type, Authorization")
-      app.use(cors());
-      next();
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+    res.header("Access-Control-Allow-Headers", "X-PINGOTHER, Content-Type, Authorization")
+    app.use(cors());
+    next();
 })
 
 app.post("/upload-image", uploadImage.single('image'), async (req, res) => {
 
-      const funcionalidade = new ModeloFuncionalidade({
-            titulo: req.body.title,
-            modulo: req.body.modulo,
-            URLimagem: `uploads/${req.file.filename}`
-      });
+    const funcionalidade = new ModeloFuncionalidade({
+        titulo: req.body.title,
+        modulo: req.body.modulo,
+        URLimagem: `uploads/${req.file.filename}`
+    });
 
-      await funcionalidade
+    await funcionalidade
 
-            .save()
+        .save()
 
-            .then(response =>{
-                  return res.status(200).json(response);
-              })
+        .then(response => {
+            return res.status(200).json(response);
+        })
 
-              .catch(error =>{
-                  return res.status(500).json(error);
-            });
+        .catch(error => {
+            return res.status(500).json(error);
+        });
 })
 
 
 app.get("/all/:modulo", async (req, res) => {
-    
-      await ModeloFuncionalidade.find({'modulo': {'$in': req.params.modulo}})
-                        
-                        .then(response => {
 
-                              return res.status(200).json(response);
-                        })
-                        .catch(error => {
+    console.log("===> Carrengando Modulos <===")
 
-                              return res.status(500).json(error);
-                        });
-      } 
+    await ModeloFuncionalidade.find({ 'modulo': { '$in': req.params.modulo } })
+
+        .then(response => {
+
+            return res.status(200).json(response);
+        })
+        .catch(error => {
+
+            return res.status(500).json(error);
+        });
+}
 )
 
 app.get("/delete/:id/:url", async (req, res) => {
 
-    fs.unlink(`./public/uploads/${req.params.url}`,(err) => {
+    fs.unlink(`./public/uploads/${req.params.url}`, (err) => {
         if (err) {
-          console.error(err)
-          return
-        }})
+            console.error(err)
+            return
+        }
+    })
 
-    await ModeloFuncionalidade.deleteOne({'_id': req.params.id})
+    await ModeloFuncionalidade.deleteOne({ '_id': req.params.id })
 
         .then(response => {
 
@@ -74,6 +77,6 @@ app.get("/delete/:id/:url", async (req, res) => {
 })
 
 
-app.listen(8080, () =>{
-      console.log("==> servidor iniciado na porta 8080 <==")
+app.listen(8080, () => {
+    console.log("==> servidor iniciado na porta 8080 <==")
 })
