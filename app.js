@@ -20,6 +20,7 @@ app.post("/upload-image", uploadImage.single('image'), async (req, res) => {
     const funcionalidade = new ModeloFuncionalidade({
         titulo: req.body.title,
         modulo: req.body.modulo,
+        description: req.body.description,
         URLimagem: `uploads/${req.file.filename}`
     });
 
