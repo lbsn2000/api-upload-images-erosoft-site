@@ -17,24 +17,31 @@ app.use((req, res, next) => {
 
 app.post("/upload-image", uploadImage.single('image'), async (req, res) => {
 
-    const funcionalidade = new ModeloFuncionalidade({
-        titulo: req.body.title,
-        modulo: req.body.modulo,
-        description: req.body.description,
-        URLimagem: `uploads/${req.file.filename}`
-    });
+    console.log("===>", req.file)
 
-    await funcionalidade
-
-        .save()
-
-        .then(response => {
-            return res.status(200).json(response);
-        })
-
-        .catch(error => {
-            return res.status(500).json(error);
+    if (req.file) {
+        const funcionalidade = new ModeloFuncionalidade({
+            titulo: req.body.title,
+            modulo: req.body.modulo,
+            description: req.body.description,
+            URLimagem: `${req.file.filename}`
         });
+
+        await funcionalidade
+
+            .save()
+
+            .then(response => {
+                return res.status(200).json(response);
+            })
+
+            .catch(error => {
+                return res.status(500).json(error);
+            });
+    }else{
+        return res.status(500).json(); 
+    }
+
 })
 
 
@@ -55,7 +62,9 @@ app.get("/all/:modulo", async (req, res) => {
 }
 )
 
-app.get("/delete/:id/:url", async (req, res) => {
+app.delete("/delete/:id/:url", async (req, res) => {
+
+    console.log("-->APP.DELETE<--")
 
     fs.unlink(`./public/uploads/${req.params.url}`, (err) => {
         if (err) {
@@ -67,12 +76,12 @@ app.get("/delete/:id/:url", async (req, res) => {
     await ModeloFuncionalidade.deleteOne({ '_id': req.params.id })
 
         .then(response => {
-
+            console.log("==> Deletado")
             return res.status(200).json(response);
         })
 
-        .catch(error => {
-
+        .catch(error => {   
+            console.log("--> Não Deletado")
             return res.status(500).json(error);
         });
 })
